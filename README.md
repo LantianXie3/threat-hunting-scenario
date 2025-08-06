@@ -1,7 +1,4 @@
-# threat-hunting-scenario
-
-
-# Official [Cyber Range](http://joshmadakor.tech/cyber-range) Project
+#  Threat Hunting Scenario Project
 
 <img width="400" src="https://github.com/user-attachments/assets/44bac428-01bb-4fe9-9d85-96cba7698bee" alt="Tor Logo with the onion and a crosshair on it"/>
 
@@ -30,7 +27,7 @@ Management suspects that some employees may be using TOR browsers to bypass netw
 
 ### 1. Searched the `DeviceFileEvents` Table
 
-Searched for any file that had the string "tor" in it and discovered what looks like the user "employee" downloaded a TOR installer, did something that resulted in many TOR-related files being copied to the desktop, and the creation of a file called `tor-shopping-list.txt` on the desktop at `2024-11-08T22:27:19.7259964Z`. These events began at `2024-11-08T22:14:48.6065231Z`.
+Searched for any file containing the string "tor" and found evidence that user "labuser" downloaded a TOR browser installer, performed actions that led to numerous TOR-related files being extracted to the desktop, and created a file named tor-shopping-list.txt on the desktop at 2025-08-05T20:27:19.7259964Z. This activity sequence started at 2025-08-05T20:15:27.0000000Z.
 
 **Query used to locate events:**
 
@@ -50,7 +47,7 @@ DeviceFileEvents
 
 ### 2. Searched the `DeviceProcessEvents` Table
 
-Searched for any `ProcessCommandLine` that contained the string "tor-browser-windows-x86_64-portable-14.0.1.exe". Based on the logs returned, at `2024-11-08T22:16:47.4484567Z`, an employee on the "threat-hunt-lab" device ran the file `tor-browser-windows-x86_64-portable-14.0.1.exe` from their Downloads folder, using a command that triggered a silent installation.
+Searched for any `ProcessCommandLine` that contained the string "tor-browser-windows-x86_64-portable-14.5.5.exe". Based on the logs returned, at `2025-08-05T20:16:47.0000000Z`, user "labuser" on the "lan-vt" device ran the file `tor-browser-windows-x86_64-portable-14.5.5.exe` from their Downloads folder, using a command that triggered a silent installation.
 
 **Query used to locate event:**
 
@@ -68,7 +65,7 @@ DeviceProcessEvents
 
 ### 3. Searched the `DeviceProcessEvents` Table for TOR Browser Execution
 
-Searched for any indication that user "employee" actually opened the TOR browser. There was evidence that they did open it at `2024-11-08T22:17:21.6357935Z`. There were several other instances of `firefox.exe` (TOR) as well as `tor.exe` spawned afterwards.
+Searched for any indication that user "labuser" actually opened the TOR browser. There was evidence that they did open it at `2025-08-05T20:17:19.0000000Z`. There were several other instances of `firefox.exe` (TOR) as well as `tor.exe` spawned afterwards.
 
 **Query used to locate events:**
 
@@ -85,7 +82,7 @@ DeviceProcessEvents
 
 ### 4. Searched the `DeviceNetworkEvents` Table for TOR Network Connections
 
-Searched for any indication the TOR browser was used to establish a connection using any of the known TOR ports. At `2024-11-08T22:18:01.1246358Z`, an employee on the "threat-hunt-lab" device successfully established a connection to the remote IP address `176.198.159.33` on port `9001`. The connection was initiated by the process `tor.exe`, located in the folder `c:\users\employee\desktop\tor browser\browser\torbrowser\tor\tor.exe`. There were a couple of other connections to sites over port `443`.
+Searched for any indication the TOR browser was used to establish a connection using any of the known TOR ports. At `2025-08-05T20:17:50.0000000Z`, user "labuser" on the "lan-vt" device successfully established a connection to the remote IP address `37.120.171.230` on port `9001`. The connection was initiated by the process `tor.exe`, located in the folder `c:\users\labuser\desktop\tor browser\browser\torbrowser\tor\tor.exe`. There were several other connections to sites over port `443`.
 
 **Query used to locate events:**
 
@@ -216,15 +213,17 @@ Phase 4: Active Browsing Session (3:18 PM - 3:55 PM)
 
 
 ## Summary
+---
 
 The user labuser on device lan-vt downloaded, installed, and immediately launched Tor Browser version 14.5.5 on August 5, 2025, starting at 3:15 PM. The installation used a silent deployment method to the desktop directory.
 Within minutes of launch, the user successfully established Tor network circuits and accessed multiple .onion hidden service domains, indicating immediate dark web engagement. The browsing session lasted approximately 40 minutes with continuous activity across multiple tabs.
 During this activity, the user also created a file named tor-shopping-list.txt, suggesting documentation of items or services of interest while browsing the dark web.
 The technical indicators show legitimate Tor Browser behavior with proper signatures and expected process execution. However, the rapid progression from installation to hidden service access, combined with the creation of the shopping list file, suggests planned usage for specific procurement activities.
+
 ---
 
 ## Response Taken
 
-TOR usage was confirmed on the endpoint `threat-hunt-lab` by the user `employee`. The device was isolated, and the user's direct manager was notified.
+TOR usage was confirmed on the endpoint `lan-vt` by the user `labuser`. The device was isolated, and the user's direct manager was notified.
 
 ---
